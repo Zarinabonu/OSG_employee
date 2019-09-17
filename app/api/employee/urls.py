@@ -1,7 +1,11 @@
 from django.urls import path, include
 
+from app.api.employee import views
+
 urlpatterns = [
-    # path('menu/', views.MenuCreateAPIView.as_view(), name='api-menu-create'),
-    # path('submenu/', views.SubmenuCreateAPIView.as_view(), name='api-submenu-create'),
+    path('create/', views.Employee_createAPIView.as_view(), name='api-employee-create'),
+    path('update/<int:id>', views.Employee_updateAPIView.as_view(), name='api-submenu-update'),
+    path('delete/<int:id>', views.Employee_deleteAPIView.as_view(), name='api-submenu-delete'),
+    path('list/', views.Employee_listAPIView.as_view(), name='api-employee-list'),
 
 ]
