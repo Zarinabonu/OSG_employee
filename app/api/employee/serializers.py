@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer, raise_errors_on_nested_writes
 from django.contrib.auth.models import User
-from app.model import Employee
+from app.model import Employee, Employee_salary, Employee_group, Group
 from rest_framework import serializers
 from app.api.status.serializers import StatusSerialzer
 
@@ -68,8 +68,30 @@ class Employee_userlistSerializer(ModelSerializer):
                   'email')
 
 
+class Employee_salarylistSerializer(ModelSerializer):
+    class Meta:
+        model = Employee_salary
+        fields = ('salary',)
+
+
+class Group_Serialzier(ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ('group_name',)
+
+
+class Employee_groupSerialzier(ModelSerializer):
+    employee_group = Group_Serialzier()
+
+    class Meta:
+        model = Employee_group
+        fields = ('employee_group',)
+
+
 class Employee_listSerializer(ModelSerializer):
+    employee_salary = Employee_salarylistSerializer(read_only=True)
     user = Employee_userlistSerializer()
+    employee_group_set = Employee_groupSerialzier(many=True, read_only=True)
 
     class Meta:
         model = Employee
@@ -77,7 +99,46 @@ class Employee_listSerializer(ModelSerializer):
                   'phone',
                   'address',
                   'status',
-                  'user')
+                  'user',
+                  'employee_salary',
+                  'employee_group_set')
+
+    def to_representation(self, instance):
+        print(instance.employee_salary.id)
+        employee_status = super(Employee_listSerializer, self).to_representation(instance)
+        print('111', employee_status)
+        if instance.status.degree == 9:
+            employee_status.pop('employee_salary')
+        elif instance.status.degree == 8:
+            employee_status.pop('employee_salary')
+            employee_status.pop('employee_group_set')
+
+        elif instance.status.degree == 7:
+            employee_status.pop('employee_group_set')
+        elif instance.status.degree == 6:
+            employee_status.pop('image',
+                                'phone',
+                                'address',
+                                'status',
+                                'user',
+                                'employee_salary',
+                                'employee_group_set')
+
+        return employee_status
+
+
+class Employee_salarySerialzer(ModelSerializer):
+    class Meta:
+        model = Employee_salary
+        fields = ('employee_id',
+                  'salary')
+
+    def update(self, instance, validated_data):
+        instance.employee_id = self.context['request'].data.get('employee_id')
+        instance.salary = self.context['request'].data.get('salary')
+
+        instance.save()
+        return instance
 
 
 

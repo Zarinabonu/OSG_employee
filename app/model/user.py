@@ -21,18 +21,34 @@ class Job(models.Model):
     title = models.TextField(null=True, blank=True)
     deadline = models.DateField()
 
+    def __str__(self):
+        return self.title
+
 
 class Group(models.Model):
     group_name = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return self.group_name or 'asd'
 
 
 class Employee_group(models.Model):
     employee_id = models.ForeignKey('Employee', on_delete=models.CASCADE)
     employee_group = models.ForeignKey('Group', on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.employee_id.user.username or 'asd'
+
 
 class Employee_status(models.Model):
     status_name = models.CharField(max_length=100, blank=True, null=True)
     degree = models.IntegerField(null=True, blank=True)
 
+    def __str__(self):
+        return self.status_name
+
+
+class Employee_salary(models.Model):
+    employee_id = models.OneToOneField('Employee', on_delete=models.CASCADE)
+    salary = models.IntegerField()
 
