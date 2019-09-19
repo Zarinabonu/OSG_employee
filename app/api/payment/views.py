@@ -1,0 +1,1 @@
+# Payment - tolangan pul miqdorini viewlarini shu yerga yozing

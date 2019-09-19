@@ -1,0 +1,1 @@
+# posesheniya viewlarini shu yerga yozing
