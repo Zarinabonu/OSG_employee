@@ -1,32 +1,8 @@
 from rest_framework.serializers import ModelSerializer, raise_errors_on_nested_writes
 from django.contrib.auth.models import User
-from app.model import Job, Group, Employee_group, Employee
+from app.model import Group, Employee_group, Employee, Project, Task
 from rest_framework import serializers
 from app.api.status.serializers import StatusSerialzer
-
-
-class Job_Serializer(ModelSerializer):
-    class Meta:
-        model = Job
-        fields = ('title',
-                  'deadline',)
-
-    def update(self, instance, validated_data):
-        raise_errors_on_nested_writes('update', self, validated_data)
-
-        for attr, value in validated_data.items():
-            setattr(instance.user, attr, value)
-        instance.user.save()
-        instance.save()
-
-        return instance
-
-
-class Job_listSerializer(ModelSerializer):
-    class Meta:
-        model = Job
-        fields = ('title',
-                  'deadline',)
 
 
 class UserSerializer(ModelSerializer):
@@ -42,16 +18,18 @@ class UserSereializer(ModelSerializer):
 
 
 class Employee_listSerializer(ModelSerializer):
-    user = UserSereializer(many=True, read_only=True)
+    user = UserSereializer(read_only=True)
 
     class Meta:
         model = Employee
         fields = ('image',
-                  'status')
+                  'status',
+                  'user')
 
 
 class Employee_groupSerialzier(ModelSerializer):
-    employee_id = Employee_listSerializer
+    employee_id = Employee_listSerializer(read_only=True)
+
     class Meta:
         model = Employee_group
         fields = ('employee_id',
@@ -71,6 +49,11 @@ class Group_Serialzier(ModelSerializer):
         employees = self.context['request'].data.getlist('employee_id')
         group.save()
 
+        p_id = self.context['request'].data.get('project_id')
+        p_deadline = self.context['request'].data.get('deadline')
+        p = Project.objects.get(id=p_id)
+        p.group_id = group
+        p.deadline = p_deadline
         for e in employees:
             # group.employee_group_set.add(Employee.objects.get(id=e))
             Employee_group.objects.create(employee_id_id=e, employee_group_id=group.id)
@@ -101,3 +84,64 @@ class Group_listSerialzier(ModelSerializer):
         model = Group
         fields = ('group_name',
                   'employee_group_set')
+
+
+class TaskSerialzer(ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ('task',)
+
+    def create(self, validated_data):
+        task = Task(**validated_data)
+        task.save()
+        p = self.context['request'].data.get('project_id')
+        project = Project.objects.get(id=p)
+        task.project_id = project
+        employee_id = self.context['request'].data.get('employee_id')
+        if employee_id:
+            task.employee_id = employee_id
+        task.save()
+
+    def update(self, instance, validated_data):
+        instance.task = self.context['request'].data.getlist('task')
+        employee = self.context['request'].data.get('employee_id')
+        if employee:
+            instance.employee_id = employee
+
+        instance.save()
+        return instance
+
+
+class Project_Serialzer(ModelSerializer):
+    class Meta:
+        model = Project
+        fields = ('title',
+                  'description',
+                  'deadline')
+
+    def update(self, instance, validated_data):
+        instance.title = self.context['request'].data.getlist('title')
+        instance.description = self.context['request'].data.getlist('description')
+        instance.deadline = self.context['request'].data.getlist('deadline')
+
+        instance.save()
+        return instance
+
+
+class Project_listSerializer(ModelSerializer):
+    group_id = Group_listSerialzier(read_only=True)
+
+    class Meta:
+        model = Project
+        fields = ('title',
+                  'description',
+                  'deadline',
+                  'group_id')
+
+
+
+
+
+
+
+

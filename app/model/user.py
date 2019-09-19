@@ -17,13 +17,6 @@ class Attendance(models.Model):
     date_finish = models.DateTimeField(auto_now_add=True)
 
 
-class Job(models.Model):
-    title = models.TextField(null=True, blank=True)
-    deadline = models.DateField()
-
-    def __str__(self):
-        return self.title
-
 
 class Group(models.Model):
     group_name = models.CharField(max_length=100, null=True, blank=True)
