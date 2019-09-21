@@ -1,6 +1,6 @@
 from django.db import models
 
-from app.model.employee import Employee
+from app.models.employee import Employee
 
 
 class Attendance(models.Model):

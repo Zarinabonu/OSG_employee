@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from app.model.employee import Employee
-from app.model.group import Group
+from app.models.employee import Employee
+from app.models.group import Group
 
 
 class Project(models.Model):

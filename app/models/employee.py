@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from app.model.group import Group
-from app.model.position import Position
+from app.models.group import Group
+from app.models.position import Position
 
 
 class Employee(models.Model):
@@ -23,8 +23,8 @@ class Employee(models.Model):
 
 
 class EmployeeGroup(models.Model):
-    employee = models.ForeignKey(Employee, on_delete=models.SET_NULL)
-    group = models.ForeignKey(Group, on_delete=models.SET_NULL)
+    employee = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True)
+    group = models.ForeignKey(Group, on_delete=models.SET_NULL, null=True)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
