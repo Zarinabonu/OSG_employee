@@ -149,7 +149,7 @@ class Employee_groupSerializer(ModelSerializer):
         #     employee_g.employee_id = e
         #     employee_g.save()
 
-        # return employee_g
+        # return employee_gs
 
     # def create(self, validated_data):
     #     employee_group = Employee_group(**validated_data)
