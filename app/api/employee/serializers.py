@@ -1,12 +1,17 @@
 from rest_framework.serializers import ModelSerializer, raise_errors_on_nested_writes
 from django.contrib.auth.models import User
-from app.model import Employee, Employee_salary, Employee_group, Group
+
+# from app.api.project.serializers import Employee_groupSerializer
+from app.api.group.serializers import GroupSerializer
+from app.api.user.serializers import UserSerialzier
+from app.model import Employee, Employee_group, Group, Project
 from rest_framework import serializers
-from app.api.status.serializers import StatusSerialzer
+from app.api.position.serializers import PositionSerialzer
 
 
 class EmployeeSerializer(ModelSerializer):
-    status = StatusSerialzer(read_only=True)
+    position = PositionSerialzer(read_only=True)
+    position_id = serializers.IntegerField(write_only=True)
     username = serializers.CharField(write_only=True)
     first_name = serializers.CharField(write_only=True)
     last_name = serializers.CharField(write_only=True)
@@ -19,26 +24,29 @@ class EmployeeSerializer(ModelSerializer):
         fields = ('image',
                   'phone',
                   'address',
-                  'status',
+                  'position',
                   'username',
                   'first_name',
                   'last_name',
                   'email',
+                  'salary',
                   'is_active',
                   'password',
+                  'position_id',
                   )
 
     def create(self, validated_data):
         username = validated_data.pop('username')
-    #     _id = serializers.IntegerField(write_only=True)
+        #     _id = serializers.IntegerField(write_only=True)
         firstname = validated_data.pop('first_name')
         lastname = validated_data.pop('last_name')
         email = validated_data.pop('email')
         is_active = validated_data.pop('is_active')
-        password = validated_data('password')
-    #
+        password = validated_data.pop('password')
+
         employee = Employee(**validated_data)
-        u = User.objects.create(username=username, first_name=firstname, last_name=lastname, email=email, is_active=is_active)
+        u = User.objects.create(username=username, first_name=firstname, last_name=lastname, email=email,
+                                is_active=is_active)
         u.set_password(password)
         u.save()
         employee.user = u
@@ -53,25 +61,12 @@ class EmployeeSerializer(ModelSerializer):
             instance.user.set_password(p)
         for attr, value in validated_data.items():
             setattr(instance.user, attr, value)
+            setattr(instance, attr, value)
+
         instance.user.save()
         instance.save()
 
         return instance
-
-
-class Employee_userlistSerializer(ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('username',
-                  'first_name',
-                  'last_name',
-                  'email')
-
-
-class Employee_salarylistSerializer(ModelSerializer):
-    class Meta:
-        model = Employee_salary
-        fields = ('salary',)
 
 
 class Group_Serialzier(ModelSerializer):
@@ -89,8 +84,7 @@ class Employee_groupSerialzier(ModelSerializer):
 
 
 class Employee_listSerializer(ModelSerializer):
-    employee_salary = Employee_salarylistSerializer(read_only=True)
-    user = Employee_userlistSerializer()
+    user = UserSerialzier()
     employee_group_set = Employee_groupSerialzier(many=True, read_only=True)
 
     class Meta:
@@ -98,49 +92,113 @@ class Employee_listSerializer(ModelSerializer):
         fields = ('image',
                   'phone',
                   'address',
-                  'status',
+                  'position',
                   'user',
-                  'employee_salary',
+                  'salary',
                   'employee_group_set')
 
     def to_representation(self, instance):
-        print(instance.employee_salary.id)
         employee_status = super(Employee_listSerializer, self).to_representation(instance)
-        print('111', employee_status)
-        if instance.status.degree == 9:
-            employee_status.pop('employee_salary')
-        elif instance.status.degree == 8:
-            employee_status.pop('employee_salary')
+        print('111', instance.position.degree)
+        if instance.position.degree == 9:
+            employee_status.pop('salary')
+        elif instance.position.degree == 8:
+            employee_status.pop('salary')
             employee_status.pop('employee_group_set')
 
-        elif instance.status.degree == 7:
+        elif instance.position.degree == 7:
             employee_status.pop('employee_group_set')
-        elif instance.status.degree == 6:
+        elif instance.position.degree == 6:
             employee_status.pop('image',
                                 'phone',
                                 'address',
-                                'status',
+                                'position',
                                 'user',
-                                'employee_salary',
+                                'salary',
                                 'employee_group_set')
 
         return employee_status
 
 
-class Employee_salarySerialzer(ModelSerializer):
+class Employee_groupSerializer(ModelSerializer):
+    employee_group = GroupSerializer(read_only=True)
+    employee_id = EmployeeSerializer(read_only=True)
+    employee_id_id = serializers.IntegerField(write_only=True)
+    employee_group_id = serializers.IntegerField(write_only=True)
+
+    # employee_id = EmployeeSerializer(read_only=True)
+
     class Meta:
-        model = Employee_salary
-        fields = ('employee_id',
-                  'salary')
+        model = Employee_group
+        fields = ('employee_group',
+                  'employee_id',
+                  'employee_group_id',
+                  'employee_id_id',
+                  )
 
-    def update(self, instance, validated_data):
-        instance.employee_id = self.context['request'].data.get('employee_id')
-        instance.salary = self.context['request'].data.get('salary')
+    # def create(self, validated_data):
+    #     group_name = validated_data.pop('employee_group')['name']
+    #     creater = validated_data.pop('employee_group')['creater']
+    #     group = Group.objects.create(name=group_name, creater=creater)
+    #     employee_g = Employee_group.objects.create(employee_group=group, employee_id=1)
+    #     print('132', employee_g)
 
-        instance.save()
-        return instance
+        # e_group = self.context['request'].data.getlist('employee_id')
+        # # e_group = Employee.objects.get(id=employees)
+        # for e in e_group:
+        #     employee_g.employee_id = e
+        #     employee_g.save()
 
+        # return employee_g
 
+    # def create(self, validated_data):
+    #     employee_group = Employee_group(**validated_data)
 
-
-
+# class Group_Serialzier(ModelSerializer):
+#     employee_group = Employee_groupSerializer(read_only=True)
+#
+#     class Meta:
+#         model = Group
+#         fields = ('name',
+#                   'employee_group')
+#
+#     def create(self, validated_data):
+#         group = Group(**validated_data)
+#         employees = self.context['request'].data.getlist('employee_id')
+#         group.save()
+#
+#         p_id = self.context['request'].data.get('project_id')
+#         p_deadline = self.context['request'].data.get('deadline')
+#         p = Project.objects.get(id=p_id)
+#         p.group_id = group
+#         p.deadline = p_deadline
+#         for e in employees:
+#             # group.employee_group_set.add(Employee.objects.get(id=e))
+#             Employee_group.objects.create(employee_id_id=e, employee_group_id=group.id)
+#
+#         return group
+#
+#     def update(self, instance, validated_data):
+#         employees_add = self.context['request'].data.getlist('employee_add_id')
+#         employees_remove = self.context['request'].data.getlist('employee_remove_id')
+#
+#         instance.group_name = self.context['request'].data.get('group_name')
+#         if employees_add:
+#             for e in employees_add:
+#                 emplo = Employee_group.objects.create(employee_id_id=e, employee_group_id=instance.id)
+#         elif employees_remove:
+#             for e in employees_remove:
+#                 emplo = Employee_group.objects.get(employee_id_id=e, employee_group_id=instance.id)
+#                 emplo.delete()
+#
+#         instance.save()
+#         return instance
+#
+#
+# class Group_listSerialzier(ModelSerializer):
+#     employee_group_set = Employee_groupSerialzier(many=True, read_only=True)
+#
+#     class Meta:
+#         model = Group
+#         fields = ('name',
+#                   'employee_group_set')
