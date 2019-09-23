@@ -28,3 +28,4 @@ class Accountant_deleteAPIView(DestroyAPIView):
 class Accountant_listAPIView(ListAPIView):
     serializer_class = Accountant_listSerialzier
     queryset = Accountant.objects.all()
+    print('l')
