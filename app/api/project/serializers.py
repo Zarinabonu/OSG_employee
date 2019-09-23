@@ -1,11 +1,12 @@
-# from rest_framework.serializers import ModelSerializer, raise_errors_on_nested_writes
-# from django.contrib.auth.models import User
-#
-# from app.api.employee.serializers import Group_listSerialzier
-# from app.model import Group, Employee_group, Employee, Project, Task
-# from rest_framework import serializers
-# from app.api.position.serializers import PositionSerialzer
-#
+from rest_framework.serializers import ModelSerializer, raise_errors_on_nested_writes
+from django.contrib.auth.models import User
+
+from app.api.employee.serializers import Group_listSerialzier, Employee_listSerializer
+from app.api.group.serializers import GroupSerializer
+from app.model import Group, Employee_group, Employee, Project, Task
+from rest_framework import serializers
+from app.api.position.serializers import PositionSerialzer
+
 #
 #
 #
@@ -40,60 +41,79 @@
 #                   'employee_group')
 #
 #
-# class TaskSerialzer(ModelSerializer):
-#     class Meta:
-#         model = Task
-#         fields = ('task',)
-#
-#     def create(self, validated_data):
-#         task = Task(**validated_data)
-#         task.save()
-#         p = self.context['request'].data.get('project_id')
-#         project = Project.objects.get(id=p)
-#         task.project_id = project
-#         employee_id = self.context['request'].data.get('employee_id')
-#         if employee_id:
-#             task.employee_id = employee_id
-#         task.save()
-#
-#     def update(self, instance, validated_data):
-#         instance.task = self.context['request'].data.getlist('task')
-#         employee = self.context['request'].data.get('employee_id')
-#         if employee:
-#             instance.employee_id = employee
-#
-#         instance.save()
-#         return instance
 #
 #
-# class Project_Serialzer(ModelSerializer):
-#     class Meta:
-#         model = Project
-#         fields = ('title',
-#                   'description',
-#                   'deadline')
-#
-#     def update(self, instance, validated_data):
-#         instance.title = self.context['request'].data.getlist('title')
-#         instance.description = self.context['request'].data.getlist('description')
-#         instance.deadline = self.context['request'].data.getlist('deadline')
-#
-#         instance.save()
-#         return instance
-#
-#
-# class Project_listSerializer(ModelSerializer):
-#     group_id = Group_listSerialzier(read_only=True)
-#
-#     class Meta:
-#         model = Project
-#         fields = ('title',
-#                   'description',
-#                   'deadline',
-#                   'group_id')
-#
-#
-#
+class Project_Serialzer(ModelSerializer):
+    group_id = GroupSerializer(read_only=True)
+    group_id_id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = Project
+        fields = ('title',
+                  'description',
+                  'deadline',
+                  'group_id',
+                  'group_id_id')
+
+    def update(self, instance, validated_data):
+        raise_errors_on_nested_writes('update', self, validated_data)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
+
+
+class Project_listSerializer(ModelSerializer):
+    group_id = GroupSerializer(read_only=True)
+
+    class Meta:
+        model = Project
+        fields = ('title',
+                  'description',
+                  'deadline',
+                  'group_id')
+
+
+class TaskSerialzer(ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ('task',)
+
+    def create(self, validated_data):
+        task = Task(**validated_data)
+        task.save()
+        p = self.context['request'].data.get('project_id')
+        project = Project.objects.get(id=p)
+        task.project_id = project
+        employee_id = self.context['request'].data.get('employee_id')
+        if employee_id:
+            task.employee_id_id = employee_id
+            task.save()
+
+        return task
+
+    def update(self, instance, validated_data):
+        employee = self.context['request'].data.get('employee_id')
+        if employee:
+            instance.employee_id = employee
+
+        instance.save()
+        return instance
+
+
+class Task_listSerializer(ModelSerializer):
+    employee_id = Employee_listSerializer(read_only=True)
+    project_id = Project_listSerializer(read_only=True)
+
+    class Meta:
+        model = Task
+        fields = ('task',
+                  'employee_id',
+                  'project_id')
+
+
 
 
 

@@ -9,8 +9,8 @@ urlpatterns = [
     path('delete/<int:id>', views.Employee_deleteAPIView.as_view(), name='api-employee-delete'),
     path('list/', views.Employee_listAPIView.as_view(), name='api-employee-list'),
     path('group/create', views.Employee_groupCreateapiView.as_view(), name='api-project-group-create'),
-    # path('group/update/<int:id>', views.Group_updateAPIView.as_view(), name='api-project-group-update'),
-    # path('group/delete/<int:id>', views.Group_deleteAPIView.as_view(), name='api-project-group-delete'),
-    # path('group/list', views.Group_listAPIView.as_view(), name='api-project-group-list'),
+    path('group/update/<int:id>', views.Employee_groupUpdateView.as_view(), name='api-project-group-update'),
+    path('group/delete/<int:id>', views.Employee_groupdeleteAPIView.as_view(), name='api-project-group-delete'),
+    path('group/list', views.Employee_listAPIView.as_view(), name='api-project-group-list'),
 
 ]

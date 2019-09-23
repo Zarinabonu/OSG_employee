@@ -3,3 +3,4 @@ from .project import Project, Task
 from .group import Group
 from .position import Position
 from .attandance import Attendance
+from .accountant import Accountant

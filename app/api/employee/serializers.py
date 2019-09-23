@@ -25,6 +25,7 @@ class EmployeeSerializer(ModelSerializer):
                   'phone',
                   'address',
                   'position',
+                  'gender',
                   'username',
                   'first_name',
                   'last_name',
@@ -72,7 +73,7 @@ class EmployeeSerializer(ModelSerializer):
 class Group_Serialzier(ModelSerializer):
     class Meta:
         model = Group
-        fields = ('group_name',)
+        fields = ('name',)
 
 
 class Employee_groupSerialzier(ModelSerializer):
@@ -136,6 +137,28 @@ class Employee_groupSerializer(ModelSerializer):
                   'employee_id_id',
                   )
 
+    def update(self, instance, validated_data):
+        raise_errors_on_nested_writes('update', self, validated_data)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+            # setattr(instance.employee_group, attr, value)
+
+        instance.save()
+        # instance.employee_group.save()
+
+        return instance
+
+
+class Group_listSerialzier(ModelSerializer):
+    employee_id = Employee_listSerializer(read_only=True)
+    employee_group = GroupSerializer(read_only=True)
+
+    class Meta:
+        model = Employee_group
+        fields = ('employee_id',
+                  'employee_group')
+
     # def create(self, validated_data):
     #     group_name = validated_data.pop('employee_group')['name']
     #     creater = validated_data.pop('employee_group')['creater']
@@ -193,12 +216,5 @@ class Employee_groupSerializer(ModelSerializer):
 #
 #         instance.save()
 #         return instance
-#
-#
-# class Group_listSerialzier(ModelSerializer):
-#     employee_group_set = Employee_groupSerialzier(many=True, read_only=True)
-#
-#     class Meta:
-#         model = Group
-#         fields = ('name',
-#                   'employee_group_set')
+
+
