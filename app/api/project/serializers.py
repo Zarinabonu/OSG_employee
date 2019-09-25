@@ -6,43 +6,8 @@ from app.api.group.serializers import GroupSerializer
 from app.model import Group, Employee_group, Employee, Project, Task
 from rest_framework import serializers
 from app.api.position.serializers import PositionSerialzer
+from datetime import datetime
 
-#
-#
-#
-# class UserSerializer(ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ('first_name', 'last_name')
-#
-#
-# class UserSereializer(ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ('last_name', 'first_name')
-#
-#
-# class Employee_listSerializer(ModelSerializer):
-#     user = UserSereializer(read_only=True)
-#
-#     class Meta:
-#         model = Employee
-#         fields = ('image',
-#                   'status',
-#                   'user')
-#
-#
-# class Employee_groupSerializer(ModelSerializer):
-#     employee_id = Employee_listSerializer(read_only=True)
-#
-#     class Meta:
-#         model = Employee_group
-#         fields = ('employee_id',
-#                   'employee_group')
-#
-#
-#
-#
 class Project_Serialzer(ModelSerializer):
     group_id = GroupSerializer(read_only=True)
     group_id_id = serializers.IntegerField(write_only=True)
@@ -57,7 +22,12 @@ class Project_Serialzer(ModelSerializer):
 
     def update(self, instance, validated_data):
         raise_errors_on_nested_writes('update', self, validated_data)
-
+        request = self.context['request']
+        u = User.objects.get(id=request.user.id)
+        if u.employee.position.degree == 9:
+            instance.done = True
+            instance.done_date = datetime.now()
+            instance.save()
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
@@ -96,8 +66,15 @@ class TaskSerialzer(ModelSerializer):
 
     def update(self, instance, validated_data):
         employee = self.context['request'].data.get('employee_id')
+        print('eeee', instance.employee_id_id)
+        request = self.context['request']
+        u = User.objects.get(id=request.user.id)
+        if u.employee.id == instance.employee_id_id:
+            instance.done = True
+            instance.done_date = datetime.now()
+
         if employee:
-            instance.employee_id = employee
+            instance.employee_id_id = employee
 
         instance.save()
         return instance
