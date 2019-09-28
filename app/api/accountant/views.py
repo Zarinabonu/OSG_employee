@@ -1,4 +1,5 @@
 from rest_framework.generics import CreateAPIView, UpdateAPIView, DestroyAPIView, ListAPIView
+from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -8,24 +9,36 @@ from app.model import Accountant
 from datetime import datetime
 
 
+class IsAccountantUser(BasePermission):
+
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.employee.position.degree == 7)
+
+
 class Accountant_createAPIView(CreateAPIView):
     serializer_class = AccountantSerializer
     queryset = Accountant.objects.all()
+    permission_classes = [IsAccountantUser]
 
 
 class Accountant_updateAPIView(UpdateAPIView):
     serializer_class = AccountantSerializer
     queryset = Accountant.objects.all()
     lookup_url_kwarg = 'id'
+    permission_classes = [IsAccountantUser]
 
 
 class Accountant_deleteAPIView(DestroyAPIView):
     serializer_class = AccountantSerializer
     queryset = Accountant.objects.all()
     lookup_url_kwarg = 'id'
+    permission_classes = [IsAccountantUser]
 
 
 class Accountant_listAPIView(ListAPIView):
     serializer_class = Accountant_listSerialzier
     queryset = Accountant.objects.all()
     print('l')
+
+
+

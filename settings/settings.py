@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'app',
     'rest_framework',
     'rest_framework_swagger',
+    'rest_framework.authtoken',
+
 ]
 
 MIDDLEWARE = [
@@ -136,8 +138,17 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
-
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100,
+    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
 }
 
 
