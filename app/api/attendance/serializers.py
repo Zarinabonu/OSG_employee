@@ -17,5 +17,6 @@ class AttandanceSerialzier(ModelSerializer):
 
 
 
+
     # def update(self, instance, validated_data):
     #     if instance.
