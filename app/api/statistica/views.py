@@ -20,11 +20,11 @@ class Static_listAPIView(ListAPIView):
         e = self.request.GET.get('employee_id')
         # em = Employee.objects.filter(id=e)
         queryset = Attendance.objects.filter(employee_id_id=e)
-        queryset = queryset.filter(date_start__week_day__gte=1)
+        queryset = queryset.filter(created__week_day__gte=1)
         # attandance = q.filter(date_start__day=)
         date_N_days_ago = datetime.now() - timedelta(days=N)
         # queryset = queryset.filter(date_start__gte=date_N_days_ago)
-        queryset = queryset.order_by('date_start')[:6]
+        queryset = queryset.order_by('created')[:6]
         print('R',queryset)
 
         print('Q', date_N_days_ago)

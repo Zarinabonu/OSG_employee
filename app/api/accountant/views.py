@@ -40,5 +40,14 @@ class Accountant_listAPIView(ListAPIView):
     queryset = Accountant.objects.all()
     print('l')
 
+    def get_queryset(self):
+        qs = Accountant.objects.all()
+        if self.request.GET.get('month'):
+            qs = qs.filter(date__month=self.request.GET.get('month'))
+        if self.request.GET.get('employee_id'):
+            qs = qs.filter(employee_id=self.request.GET.get('employee_id'))
+
+        return qs
+
 
 

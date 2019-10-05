@@ -7,6 +7,7 @@ from app.api.user.serializers import UserSerialzier
 from app.model import Employee, Employee_group, Group, Project
 from rest_framework import serializers
 from app.api.position.serializers import PositionSerialzer
+from app.model.user import Employee_salary
 
 
 class EmployeeSerializer(ModelSerializer):
@@ -30,7 +31,6 @@ class EmployeeSerializer(ModelSerializer):
                   'first_name',
                   'last_name',
                   'email',
-                  'salary',
                   'is_active',
                   'password',
                   'position_id',
@@ -95,16 +95,14 @@ class Employee_listSerializer(ModelSerializer):
                   'address',
                   'position',
                   'user',
-                  'salary',
                   'employee_group_set')
 
     def to_representation(self, instance):
         employee_status = super(Employee_listSerializer, self).to_representation(instance)
         print('111', instance.position.degree)
         if instance.position.degree == 9:
-            employee_status.pop('salary')
+            pass
         elif instance.position.degree == 8:
-            employee_status.pop('salary')
             employee_status.pop('employee_group_set')
 
         elif instance.position.degree == 7:
@@ -115,7 +113,6 @@ class Employee_listSerializer(ModelSerializer):
                                 'address',
                                 'position',
                                 'user',
-                                'salary',
                                 'employee_group_set')
 
         return employee_status
@@ -158,6 +155,18 @@ class Group_listSerialzier(ModelSerializer):
         model = Employee_group
         fields = ('employee_id',
                   'employee_group')
+
+
+class Employee_salarySerializer(ModelSerializer):
+    employee_id = Employee_listSerializer(read_only=True)
+    employee_id_id = serializers.IntegerField(write_only=True)
+    class Meta:
+        model = Employee_salary
+        fields = ('employee_id',
+                  'employee_id_id',
+                  'sum',
+                  'date')
+
 
     # def create(self, validated_data):
     #     group_name = validated_data.pop('employee_group')['name']

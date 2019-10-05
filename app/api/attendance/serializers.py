@@ -7,13 +7,12 @@ from rest_framework import serializers
 
 
 class AttandanceSerialzier(ModelSerializer):
-    employee_id = Employee_listSerializer(read_only=True)
-    employee_id_id = serializers.IntegerField(write_only=True)
+    # employee_id = Employee_listSerializer(read_only=True)
+    # employee_id_id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = Attendance
-        fields = ('employee_id',
-                  'employee_id_id')
+        fields = ()
 
 
 

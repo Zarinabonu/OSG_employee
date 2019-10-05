@@ -1,4 +1,4 @@
-from .user import Employee, Employee_group
+from .user import Employee, Employee_group, Employee_salary
 from .project import Project, Task
 from .group import Group
 from .position import Position

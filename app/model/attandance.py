@@ -1,3 +1,4 @@
+from datetime import timedelta
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -7,7 +8,7 @@ from django.dispatch import receiver
 
 class Attendance(models.Model):
     employee_id = models.ForeignKey('Employee', on_delete=models.CASCADE)
-    date_start = models.DateTimeField(auto_now_add=True)
+    date_start = models.DateTimeField(null=True, blank=True)
     date_finish = models.DateTimeField(null=True, blank=True)
     created = models.DateField(auto_now_add=True)
     check_out = models.BooleanField(default=True)
@@ -16,10 +17,18 @@ class Attendance(models.Model):
 @receiver(post_save, sender=Attendance)
 def create_check_out(sender, instance, created, **kwargs):
     if created:
-        request = instance.employee_id
-        att = Attendance.objects.filter(employee_id=request)
-        att = att.exclude(date_start=instance.date_start)
-        attand = att.last_item()
+        if instance.check_out:
+            request = instance.employee_id
+            att = Attendance.objects.filter(employee_id=request)
+            att = att.exclude(date_start=instance.date_start)
+            last_date = att.last().date_start.date()
+            new_date = instance.date_start.date()
+            subtitution = new_date - last_date
+            for attandance in range(1, subtitution.days):
+                at = Attendance.objects.create(employee_id=instance.employee_id, check_out=False)
+                at.created = last_date+timedelta(days=attandance)
+                at.save()
+            print('DAYS', subtitution)
 
 
 

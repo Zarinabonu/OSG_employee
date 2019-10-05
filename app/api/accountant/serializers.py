@@ -45,3 +45,4 @@ class Accountant_listSerialzier(ModelSerializer):
                   'date',
                   'sum',
                   'accounter')
+

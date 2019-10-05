@@ -12,5 +12,6 @@ urlpatterns = [
     path('group/update/<int:id>', views.Employee_groupUpdateView.as_view(), name='api-project-group-update'),
     path('group/delete/<int:id>', views.Employee_groupdeleteAPIView.as_view(), name='api-project-group-delete'),
     path('group/list', views.Employee_listAPIView.as_view(), name='api-project-group-list'),
+    path('salary/create/', views.Employee_salaryCreateAPIView.as_view(), name='api-employee-salary-create'),
 
 ]

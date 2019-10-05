@@ -6,6 +6,8 @@ from rest_framework.views import APIView
 from app.api.attendance.serializers import AttandanceSerialzier
 from app.model import Attendance, Employee
 from datetime import datetime
+from datetime import date
+
 
 class IsManagerUser(BasePermission):
 
@@ -27,7 +29,13 @@ class Attandance_createAPIView(APIView):
             e_finish.date_finish = datetime.now()
             e_finish.save()
         else:
-            a = Attendance.objects.create(employee_id=e)
+            a = Attendance.objects.create(employee_id=e, date_start = datetime.now())
+            # a.date_start = datetime.now()
+            # a.save()
+
+
+
+
 
         print(e.attendance_set.filter(created=datetime.now().date()).count())
         #     pass

@@ -6,9 +6,10 @@ from rest_framework.generics import CreateAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, BasePermission
 
 from app.api.employee.serializers import EmployeeSerializer, Employee_listSerializer, Employee_groupSerializer, \
-    Group_listSerialzier
+    Group_listSerialzier, Employee_salarySerializer
 from app.api.position.serializers import PositionSerialzer
 from app.model import Position, Employee, Group, Employee_group
+from app.model.user import Employee_salary
 
 
 class Employee_createAPIView(CreateAPIView):
@@ -73,6 +74,18 @@ class Employee_groupdeleteAPIView(DestroyAPIView):
     queryset = Employee_group.objects.all()
     lookup_url_kwarg = 'id'
     permission_classes = [IsManagerUser]
+
+
+class IsAccountantUser(BasePermission):
+
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.employee.position.degree == 7)
+
+
+class Employee_salaryCreateAPIView(CreateAPIView):
+    serializer_class = Employee_salarySerializer
+    queryset = Employee_salary.objects.all()
+    permission_classes = [IsAccountantUser]
 
 
 

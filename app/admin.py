@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .model import Employee, Attendance, Employee_group, Group, Position, Task, Project, Accountant
+from .model import Employee, Attendance, Employee_group, Group, Position, Task, Project, Accountant, Employee_salary
 
 
 admin.site.register(Employee)
@@ -11,5 +11,6 @@ admin.site.register(Position)
 admin.site.register(Task)
 admin.site.register(Project)
 admin.site.register(Accountant)
+admin.site.register(Employee_salary)
 
 # Register your models here.

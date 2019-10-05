@@ -19,10 +19,16 @@ class Employee(models.Model):
     phone = models.IntegerField(null=True, blank=True)
     address = models.TextField(null=True, blank=True)
     position = models.ForeignKey('Position', on_delete=models.SET_NULL, null=True)
-    salary = models.IntegerField(null=True, blank=True)
     register_num = models.TextField(null=True,blank=True)
     gender = models.IntegerField(choices=GENDER)
     qr_file = models.FileField(null=True, upload_to="files/")
+
+
+class Employee_salary(models.Model):
+    employee_id = models.ForeignKey('Employee', on_delete=models.CASCADE)
+    sum = models.IntegerField()
+    date = models.DateField()
+    created = models.DateField(auto_now_add=True)
 
 
 id = 1
