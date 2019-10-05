@@ -5,9 +5,9 @@ from rest_framework.generics import CreateAPIView, UpdateAPIView, DestroyAPIView
 # from app.api.employee.serializers import EmployeeSerializer, Employee_listSerializer, Employee_groupSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, BasePermission
 
-from app.api.employee.serializers import EmployeeSerializer, Employee_listSerializer, Employee_groupSerializer, \
-    Group_listSerialzier, Employee_salarySerializer
+from app.api.employee.serializers import EmployeeSerializer, Employee_listSerializer, Employee_groupSerializer, Group_listSerialzier
 from app.api.position.serializers import PositionSerialzer
+from app.api.salary.serializers import Employee_salarySerializer
 from app.model import Position, Employee, Group, Employee_group
 from app.model.user import Employee_salary
 

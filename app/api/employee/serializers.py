@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 
 # from app.api.project.serializers import Employee_groupSerializer
 from app.api.group.serializers import GroupSerializer
-from app.api.user.serializers import UserSerialzier
+
+from app.api.user.serializers import UserSerilizer
 from app.model import Employee, Employee_group, Group, Project
 from rest_framework import serializers
 from app.api.position.serializers import PositionSerialzer
@@ -85,7 +86,7 @@ class Employee_groupSerialzier(ModelSerializer):
 
 
 class Employee_listSerializer(ModelSerializer):
-    user = UserSerialzier()
+    user = UserSerilizer()
     employee_group_set = Employee_groupSerialzier(many=True, read_only=True)
 
     class Meta:
@@ -156,74 +157,5 @@ class Group_listSerialzier(ModelSerializer):
         fields = ('employee_id',
                   'employee_group')
 
-
-class Employee_salarySerializer(ModelSerializer):
-    employee_id = Employee_listSerializer(read_only=True)
-    employee_id_id = serializers.IntegerField(write_only=True)
-    class Meta:
-        model = Employee_salary
-        fields = ('employee_id',
-                  'employee_id_id',
-                  'sum',
-                  'date')
-
-
-    # def create(self, validated_data):
-    #     group_name = validated_data.pop('employee_group')['name']
-    #     creater = validated_data.pop('employee_group')['creater']
-    #     group = Group.objects.create(name=group_name, creater=creater)
-    #     employee_g = Employee_group.objects.create(employee_group=group, employee_id=1)
-    #     print('132', employee_g)
-
-        # e_group = self.context['request'].data.getlist('employee_id')
-        # # e_group = Employee.objects.get(id=employees)
-        # for e in e_group:
-        #     employee_g.employee_id = e
-        #     employee_g.save()
-
-        # return employee_gs
-
-    # def create(self, validated_data):
-    #     employee_group = Employee_group(**validated_data)
-
-# class Group_Serialzier(ModelSerializer):
-#     employee_group = Employee_groupSerializer(read_only=True)
-#
-#     class Meta:
-#         model = Group
-#         fields = ('name',
-#                   'employee_group')
-#
-#     def create(self, validated_data):
-#         group = Group(**validated_data)
-#         employees = self.context['request'].data.getlist('employee_id')
-#         group.save()
-#
-#         p_id = self.context['request'].data.get('project_id')
-#         p_deadline = self.context['request'].data.get('deadline')
-#         p = Project.objects.get(id=p_id)
-#         p.group_id = group
-#         p.deadline = p_deadline
-#         for e in employees:
-#             # group.employee_group_set.add(Employee.objects.get(id=e))
-#             Employee_group.objects.create(employee_id_id=e, employee_group_id=group.id)
-#
-#         return group
-#
-#     def update(self, instance, validated_data):
-#         employees_add = self.context['request'].data.getlist('employee_add_id')
-#         employees_remove = self.context['request'].data.getlist('employee_remove_id')
-#
-#         instance.group_name = self.context['request'].data.get('group_name')
-#         if employees_add:
-#             for e in employees_add:
-#                 emplo = Employee_group.objects.create(employee_id_id=e, employee_group_id=instance.id)
-#         elif employees_remove:
-#             for e in employees_remove:
-#                 emplo = Employee_group.objects.get(employee_id_id=e, employee_group_id=instance.id)
-#                 emplo.delete()
-#
-#         instance.save()
-#         return instance
 
 
