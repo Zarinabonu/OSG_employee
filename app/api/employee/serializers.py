@@ -4,11 +4,14 @@ from django.contrib.auth.models import User
 # from app.api.project.serializers import Employee_groupSerializer
 from app.api.group.serializers import GroupSerializer
 
+
+from app.api.salary.serializers import Employee_salarySerializer
+
 from app.api.user.serializers import UserSerilizer
-from app.model import Employee, Employee_group, Group, Project
+from app.model import Employee, Employee_group
 from rest_framework import serializers
 from app.api.position.serializers import PositionSerialzer
-from app.model.user import Employee_salary
+
 
 
 class EmployeeSerializer(ModelSerializer):
@@ -71,23 +74,52 @@ class EmployeeSerializer(ModelSerializer):
         return instance
 
 
-class Group_Serialzier(ModelSerializer):
-    class Meta:
-        model = Group
-        fields = ('name',)
+# class Group_Serialzier(ModelSerializer):
+#     class Meta:
+#         model = Group
+#         fields = ('name',)
 
 
-class Employee_groupSerialzier(ModelSerializer):
-    employee_group = Group_Serialzier()
+# class Employee_groupSerialzier(ModelSerializer):
+#     employee_group = GroupSerializer()
+#
+#     class Meta:
+#         model = Employee_group
+#         fields = ('employee_group',)
+#
+
+class Employee_groupSerializer(ModelSerializer):
+    employee_group = GroupSerializer(read_only=True)
+    employee_id = EmployeeSerializer(read_only=True)
+    employee_id_id = serializers.IntegerField(write_only=True)
+    employee_group_id = serializers.IntegerField(write_only=True)
+
+    # employee_id = EmployeeSerializer(read_only=True)
 
     class Meta:
         model = Employee_group
-        fields = ('employee_group',)
+        fields = ('employee_group',
+                  'employee_id',
+                  'employee_group_id',
+                  'employee_id_id',
+                  )
+
+    def update(self, instance, validated_data):
+        raise_errors_on_nested_writes('update', self, validated_data)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+            # setattr(instance.employee_group, attr, value)
+
+        instance.save()
+        # instance.employee_group.save()
+
+        return instance
 
 
 class Employee_listSerializer(ModelSerializer):
     user = UserSerilizer()
-    employee_group_set = Employee_groupSerialzier(many=True, read_only=True)
+    employee_group_set = Employee_groupSerializer(many=True, read_only=True)
 
     class Meta:
         model = Employee
@@ -119,35 +151,6 @@ class Employee_listSerializer(ModelSerializer):
         return employee_status
 
 
-class Employee_groupSerializer(ModelSerializer):
-    employee_group = GroupSerializer(read_only=True)
-    employee_id = EmployeeSerializer(read_only=True)
-    employee_id_id = serializers.IntegerField(write_only=True)
-    employee_group_id = serializers.IntegerField(write_only=True)
-
-    # employee_id = EmployeeSerializer(read_only=True)
-
-    class Meta:
-        model = Employee_group
-        fields = ('employee_group',
-                  'employee_id',
-                  'employee_group_id',
-                  'employee_id_id',
-                  )
-
-    def update(self, instance, validated_data):
-        raise_errors_on_nested_writes('update', self, validated_data)
-
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-            # setattr(instance.employee_group, attr, value)
-
-        instance.save()
-        # instance.employee_group.save()
-
-        return instance
-
-
 class Group_listSerialzier(ModelSerializer):
     employee_id = Employee_listSerializer(read_only=True)
     employee_group = GroupSerializer(read_only=True)
@@ -156,6 +159,40 @@ class Group_listSerialzier(ModelSerializer):
         model = Employee_group
         fields = ('employee_id',
                   'employee_group')
+
+
+
+class EmployeeGroupSerializer(ModelSerializer):
+    employee_id = EmployeeSerializer(read_only=True)
+    employee_id_id = serializers.IntegerField(write_only=True)
+    employee_group = GroupSerializer(read_only=True)
+    employee_group_id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = Employee_group
+        fields = ('employee_id_id',
+                  'employee_group_id',
+                  'employee_id',
+                  'employee_group')
+
+
+class Employee_infoSerializer(ModelSerializer):
+    position = PositionSerialzer(read_only=True)
+    employee_salary_set = Employee_salarySerializer(read_only=True, many=True)
+    employee_group_set = EmployeeGroupSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Employee
+        fields = ('user',
+                  'image',
+                  'phone',
+                  'address',
+                  'position',
+                  'gender',
+                  'employee_salary_set',
+                  'employee_group_set',
+                  )
+
 
 
 

@@ -2,29 +2,44 @@ from rest_framework.serializers import ModelSerializer, raise_errors_on_nested_w
 from django.contrib.auth.models import User
 
 # from app.api.employee.serializers import EmployeeSerializer
-from app.model import Group, Employee_group
+
+from app.model import Group, Project, Task
 from rest_framework import serializers
+
+
+class TaskForProjectListSerializer(ModelSerializer):
+
+    class Meta:
+        model = Task
+        fields = ('task',
+                  'done',
+                  'done_date')
+
+
+class ProjectForGroupListSerializer(ModelSerializer):
+    task_set = TaskForProjectListSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Project
+        fields = ('title',
+                  'description',
+                  'deadline',
+                  'task_set',
+                  )
+
+
 
 
 class GroupSerializer(ModelSerializer):
     # creater = serializers.IntegerField(read_only=True)
+    project_set = ProjectForGroupListSerializer(many=True, read_only=True)
 
     class Meta:
         model = Group
         fields = ('name',
                   'creater',
-                  )
+                  'project_set')
 
-
-class Employee_groupSerializer(ModelSerializer):
-    employee_id_id = serializers.IntegerField(write_only=True)
-    employee_group_id = serializers.IntegerField(write_only=True)
-
-    class Meta:
-        model = Employee_group
-        fields = ('employee_id_id',
-                  'employee_group_id',
-                  )
 
     # def create(self, validated_data):
     #     group = Group(**validated_data)
@@ -33,3 +48,4 @@ class Employee_groupSerializer(ModelSerializer):
     #
     #     group.save()
     #     return group
+

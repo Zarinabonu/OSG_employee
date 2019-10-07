@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
+
+from app.model.status import Task_status
 from app.model.user import Employee_group, Employee
 from .group import Group
 
@@ -19,3 +21,4 @@ class Task(models.Model):
     task = models.TextField(null=True, blank=True)
     done = models.BooleanField(default=False)
     done_date = models.DateTimeField(null=True, blank=True)
+    status = models.ForeignKey(Task_status, on_delete=models.SET_NULL, null=True)

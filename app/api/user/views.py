@@ -2,8 +2,9 @@
 from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView
 from rest_framework.permissions import IsAdminUser
 
+from app.api.employee.serializers import Employee_infoSerializer
 from app.api.position.serializers import PositionSerialzer
-from app.api.user.serializers import Employee_infoSerializer
+
 from app.model import Employee
 
 

@@ -1,12 +1,15 @@
 from rest_framework.serializers import ModelSerializer, raise_errors_on_nested_writes
 from django.contrib.auth.models import User
 
-from app.api.employee.serializers import Group_listSerialzier, Employee_listSerializer
+
+# from app.api.group.serializers import GroupSerializer
+from app.api.employee.serializers import Employee_listSerializer
 from app.api.group.serializers import GroupSerializer
-from app.model import Group, Employee_group, Employee, Project, Task
+from app.model import Project, Task
 from rest_framework import serializers
-from app.api.position.serializers import PositionSerialzer
+
 from datetime import datetime
+
 
 class Project_Serialzer(ModelSerializer):
     group_id = GroupSerializer(read_only=True)
@@ -35,15 +38,6 @@ class Project_Serialzer(ModelSerializer):
         return instance
 
 
-class Project_listSerializer(ModelSerializer):
-    group_id = GroupSerializer(read_only=True)
-
-    class Meta:
-        model = Project
-        fields = ('title',
-                  'description',
-                  'deadline',
-                  'group_id')
 
 
 class TaskSerialzer(ModelSerializer):
@@ -70,14 +64,34 @@ class TaskSerialzer(ModelSerializer):
         request = self.context['request']
         u = User.objects.get(id=request.user.id)
         if u.employee.id == instance.employee_id_id:
-            instance.done = True
-            instance.done_date = datetime.now()
+
+            instance.status_id = request.GET.get('status_id')
+            if u.employee.position.degree == 9:
+                instance.done = True
+                instance.done_date = datetime.now()
 
         if employee:
             instance.employee_id_id = employee
 
         instance.save()
         return instance
+
+
+
+
+
+
+
+class Project_listSerializer(ModelSerializer):
+    group_id = GroupSerializer(read_only=True)
+
+    class Meta:
+        model = Project
+        fields = ('title',
+                  'description',
+                  'deadline',
+                  'group_id'
+                  )
 
 
 class Task_listSerializer(ModelSerializer):
@@ -89,10 +103,5 @@ class Task_listSerializer(ModelSerializer):
         fields = ('task',
                   'employee_id',
                   'project_id')
-
-
-
-
-
 
 

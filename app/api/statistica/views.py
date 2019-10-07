@@ -5,7 +5,7 @@ from rest_framework.generics import CreateAPIView, UpdateAPIView, DestroyAPIView
 from app.api.employee.serializers import EmployeeSerializer, Employee_listSerializer
 # from app.api.project.serializers import  Group_listSerialzier, TaskSerialzer, Project_listSerializer
 from app.api.position.serializers import PositionSerialzer
-from app.api.project.serializers import Project_Serialzer, Project_listSerializer, TaskSerialzer, Task_listSerializer
+
 from app.api.statistica.serializers import StaticSerializer
 from app.model import Group, Employee_group, Employee, Task, Project, Attendance
 
