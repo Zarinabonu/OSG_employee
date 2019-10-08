@@ -26,7 +26,8 @@ class EmployeeSerializer(ModelSerializer):
 
     class Meta:
         model = Employee
-        fields = ('image',
+        fields = ('id',
+                  'image',
                   'phone',
                   'address',
                   'position',
@@ -123,7 +124,8 @@ class Employee_listSerializer(ModelSerializer):
 
     class Meta:
         model = Employee
-        fields = ('image',
+        fields = ('id',
+                  'image',
                   'phone',
                   'address',
                   'position',
@@ -183,7 +185,8 @@ class Employee_infoSerializer(ModelSerializer):
 
     class Meta:
         model = Employee
-        fields = ('user',
+        fields = ('id',
+                  'user',
                   'image',
                   'phone',
                   'address',
