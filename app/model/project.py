@@ -13,6 +13,7 @@ class Project(models.Model):
     deadline = models.DateField(null=True, blank=True)
     done = models.BooleanField(default=False)
     done_date = models.DateTimeField(null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
 
 
 class Task(models.Model):
@@ -22,3 +23,4 @@ class Task(models.Model):
     done = models.BooleanField(default=False)
     done_date = models.DateTimeField(null=True, blank=True)
     status = models.ForeignKey(Task_status, on_delete=models.SET_NULL, null=True)
+    created = models.DateTimeField(auto_now_add=True)

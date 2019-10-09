@@ -23,3 +23,11 @@ class PositionSerialzer(ModelSerializer):
             status.degree = '0'
         status.save()
         return status
+
+
+class Position_listSerializer(ModelSerializer):
+    class Meta:
+        model = Position
+        fields = ('id',
+                  'name',
+                  'degree')

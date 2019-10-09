@@ -11,7 +11,8 @@ class TaskForProjectListSerializer(ModelSerializer):
 
     class Meta:
         model = Task
-        fields = ('task',
+        fields = ('id',
+                  'task',
                   'done',
                   'done_date')
 
@@ -21,13 +22,12 @@ class ProjectForGroupListSerializer(ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ('title',
+        fields = ('id',
+                  'title',
                   'description',
                   'deadline',
                   'task_set',
                   )
-
-
 
 
 class GroupSerializer(ModelSerializer):
@@ -36,16 +36,8 @@ class GroupSerializer(ModelSerializer):
 
     class Meta:
         model = Group
-        fields = ('name',
+        fields = ('id',
+                  'name',
                   'creater',
                   'project_set')
-
-
-    # def create(self, validated_data):
-    #     group = Group(**validated_data)
-    #     request = self.context['request'].data.get('creater')
-    #     group.creater = request
-    #
-    #     group.save()
-    #     return group
 

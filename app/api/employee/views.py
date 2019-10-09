@@ -12,6 +12,12 @@ from app.model import Position, Employee, Group, Employee_group
 from app.model.user import Employee_salary
 
 
+class IsManagerUser(BasePermission):
+
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.employee.position.degree == 9)
+
+
 class Employee_createAPIView(CreateAPIView):
     serializer_class = EmployeeSerializer
     queryset = Employee.objects.all()
@@ -43,12 +49,8 @@ class Employee_deleteAPIView(DestroyAPIView):
 class Employee_listAPIView(LoginRequiredMixin, ListAPIView):
     serializer_class = Employee_listSerializer
     queryset = Employee.objects.all()
+    permission_classes = [IsAdminUser, IsManagerUser]
 
-
-class IsManagerUser(BasePermission):
-
-    def has_permission(self, request, view):
-        return bool(request.user and request.user.employee.position.degree == 9)
 
 
 class Employee_groupCreateapiView(CreateAPIView):
@@ -65,7 +67,7 @@ class Employee_groupUpdateView(UpdateAPIView):
     permission_classes = [IsManagerUser]
 
 
-class Employee_listAPIView(ListAPIView):
+class Employee_grouplistAPIView(ListAPIView):
     serializer_class = Group_listSerialzier
     queryset = Employee_group.objects.all()
 

@@ -13,7 +13,6 @@ from rest_framework import serializers
 from app.api.position.serializers import PositionSerialzer
 
 
-
 class EmployeeSerializer(ModelSerializer):
     position = PositionSerialzer(read_only=True)
     position_id = serializers.IntegerField(write_only=True)
@@ -75,20 +74,6 @@ class EmployeeSerializer(ModelSerializer):
         return instance
 
 
-# class Group_Serialzier(ModelSerializer):
-#     class Meta:
-#         model = Group
-#         fields = ('name',)
-
-
-# class Employee_groupSerialzier(ModelSerializer):
-#     employee_group = GroupSerializer()
-#
-#     class Meta:
-#         model = Employee_group
-#         fields = ('employee_group',)
-#
-
 class Employee_groupSerializer(ModelSerializer):
     employee_group = GroupSerializer(read_only=True)
     employee_id = EmployeeSerializer(read_only=True)
@@ -135,33 +120,33 @@ class Employee_listSerializer(ModelSerializer):
     def to_representation(self, instance):
         employee_status = super(Employee_listSerializer, self).to_representation(instance)
         print('111', instance.position.degree)
-        if instance.position.degree == 9:
+        if self.context['request'].user.employee.position.degree == 9:
             pass
-        elif instance.position.degree == 8:
+        elif self.context['request'].user.employee.position.degree == 8:
             employee_status.pop('employee_group_set')
 
-        elif instance.position.degree == 7:
+        elif self.context['request'].user.employee.position.degree == 7:
             employee_status.pop('employee_group_set')
-        elif instance.position.degree == 6:
-            employee_status.pop('image',
-                                'phone',
-                                'address',
-                                'position',
-                                'user',
-                                'employee_group_set')
+        elif self.context['request'].user.employee.position.degree == 6:
+            employee_status.pop('image')
+            employee_status.pop('phone')
+            employee_status.pop('address')
+            employee_status.pop('position')
+            employee_status.pop('user')
+            employee_status.pop('employee_group_set')
 
         return employee_status
 
 
-class Group_listSerialzier(ModelSerializer):
+class   Group_listSerialzier(ModelSerializer):
     employee_id = Employee_listSerializer(read_only=True)
     employee_group = GroupSerializer(read_only=True)
 
     class Meta:
         model = Employee_group
-        fields = ('employee_id',
+        fields = ('id',
+                  'employee_id',
                   'employee_group')
-
 
 
 class EmployeeGroupSerializer(ModelSerializer):

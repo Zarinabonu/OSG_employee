@@ -31,13 +31,12 @@ class Project_Serialzer(ModelSerializer):
             instance.done = True
             instance.done_date = datetime.now()
             instance.save()
+
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
         instance.save()
         return instance
-
-
 
 
 class TaskSerialzer(ModelSerializer):
@@ -66,6 +65,7 @@ class TaskSerialzer(ModelSerializer):
         if u.employee.id == instance.employee_id_id:
 
             instance.status_id = request.GET.get('status_id')
+        if instance.project_id.group_id.creater == u.employee.id:
             if u.employee.position.degree == 9:
                 instance.done = True
                 instance.done_date = datetime.now()
@@ -77,21 +77,17 @@ class TaskSerialzer(ModelSerializer):
         return instance
 
 
-
-
-
-
-
 class Project_listSerializer(ModelSerializer):
     group_id = GroupSerializer(read_only=True)
 
     class Meta:
         model = Project
-        fields = ('title',
+        fields = ('id',
+                  'title',
                   'description',
                   'deadline',
-                  'group_id'
-                  )
+                  'group_id',
+                  'created')
 
 
 class Task_listSerializer(ModelSerializer):
@@ -100,8 +96,10 @@ class Task_listSerializer(ModelSerializer):
 
     class Meta:
         model = Task
-        fields = ('task',
+        fields = ('id',
+                  'task',
                   'employee_id',
-                  'project_id')
+                  'project_id',
+                  'created')
 
 

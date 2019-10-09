@@ -20,7 +20,6 @@ class Attandance_createAPIView(APIView):
     queryset = Attendance.objects.all()
     permission_classes = [IsManagerUser]
 
-
     def post(self, request):
         q_code = request.POST.get('qr_code')
         e = Employee.objects.get(register_num=q_code)
@@ -32,10 +31,6 @@ class Attandance_createAPIView(APIView):
             a = Attendance.objects.create(employee_id=e, date_start = datetime.now())
             # a.date_start = datetime.now()
             # a.save()
-
-
-
-
 
         print(e.attendance_set.filter(created=datetime.now().date()).count())
         #     pass

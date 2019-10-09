@@ -41,7 +41,8 @@ class Accountant_listSerialzier(ModelSerializer):
 
     class Meta:
         model = Accountant
-        fields = ('employee',
+        fields = ('id',
+                  'employee',
                   'date',
                   'sum',
                   'accounter')
