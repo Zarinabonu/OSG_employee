@@ -46,7 +46,7 @@ class Employee_deleteAPIView(DestroyAPIView):
     permission_classes = [IsAdminUser]
 
 
-class Employee_listAPIView(LoginRequiredMixin, ListAPIView):
+class Employee_listAPIView(ListAPIView):
     serializer_class = Employee_listSerializer
     queryset = Employee.objects.all()
     permission_classes = [IsAdminUser, IsManagerUser]

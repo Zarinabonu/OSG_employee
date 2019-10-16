@@ -9,5 +9,6 @@ urlpatterns = [
     path('statistica/', include('app.api.statistica.urls')),
     path('user/', include('app.api.user.urls')),
     path('group/', include('app.api.group.urls')),
+    path('websocket/', include('app.api.websocket.urls'))
 
 ]
