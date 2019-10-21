@@ -25,6 +25,8 @@ class Employee_createAPIView(CreateAPIView):
 
     # def get_queryset(self):
     #     qs = Employee.objects.all()
+    #     e = qs.get(id=2)
+    #     e.accounter_id
     #     u = User.objects.all(username=self.request.user.username)
     #     if u.is_superuser:
 
