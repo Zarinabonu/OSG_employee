@@ -1,14 +1,16 @@
-from rest_framework.serializers import ModelSerializer, raise_errors_on_nested_writes
+from rest_framework.serializers import ModelSerializer, raise_errors_on_nested_writes, Serializer
 from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 
 # from app.api.project.serializers import Employee_groupSerializer
 from app.api.group.serializers import GroupSerializer
 
 
 from app.api.salary.serializers import Employee_salarySerializer
+from app.api.statistica.serializers import Salary, GiveMSerializer, StaticSerializer, projectSerializer
 
 from app.api.user.serializers import UserSerilizer
-from app.model import Employee, Employee_group
+from app.model import Employee, Employee_group, Project
 from rest_framework import serializers
 from app.api.position.serializers import PositionSerialzer
 
@@ -56,6 +58,9 @@ class EmployeeSerializer(ModelSerializer):
         u.save()
         employee.user = u
         employee.save()
+        token = Token.objects.create(user=u)
+        token.save()
+
         return employee
 
     def update(self, instance, validated_data):
@@ -103,9 +108,15 @@ class Employee_groupSerializer(ModelSerializer):
         return instance
 
 
+
+
 class Employee_listSerializer(ModelSerializer):
     user = UserSerilizer()
     employee_group_set = Employee_groupSerializer(many=True, read_only=True)
+    employee_salary_set = Salary(many=True, read_only=True)
+    accountant_set = GiveMSerializer(many=True, read_only=True,  source='accounter_id')
+    attendance_set = StaticSerializer(many=True, read_only=True)
+    project_set = serializers.SerializerMethodField()
 
     class Meta:
         model = Employee
@@ -115,7 +126,16 @@ class Employee_listSerializer(ModelSerializer):
                   'address',
                   'position',
                   'user',
-                  'employee_group_set')
+                  'employee_group_set',
+                  'employee_salary_set',
+                  'accountant_set',
+                  'attendance_set',
+                  'project_set',
+                  )
+
+    def get_project_set(self, obj):
+        qs = Project.objects.filter(group_id__employee_group__employee_id=obj)
+        return projectSerializer(qs, many=True, context=self.context).data
 
     def to_representation(self, instance):
         employee_status = super(Employee_listSerializer, self).to_representation(instance)

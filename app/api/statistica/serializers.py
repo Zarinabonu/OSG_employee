@@ -1,7 +1,6 @@
 from rest_framework.serializers import Serializer, ModelSerializer, raise_errors_on_nested_writes
 from django.contrib.auth.models import User
 
-from app.api.employee.serializers import EmployeeSerializer
 from app.api.user.serializers import UserSerilizer
 from app.model import Group, Employee, Attendance, Accountant, Employee_salary, Project
 from rest_framework import serializers
@@ -113,7 +112,6 @@ class StaticsSerializer(Serializer):
     givenMoney = serializers.SerializerMethodField()
     salary = serializers.SerializerMethodField()
     active_project = serializers.SerializerMethodField()
-    #done_project = serializers.SerializerMethodField()
 
     def get_att(self, obj):
         qs = Employee.objects.all()
